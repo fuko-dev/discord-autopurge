@@ -1,5 +1,9 @@
 const { Client, GatewayIntentBits, PermissionsBitField } = require('discord.js');
-const { token, targetChannelId, keepMessageId } = require('./config.json');
+require('dotenv').config();
+
+const token = process.env.DISCORD_TOKEN;
+const targetChannelId = process.env.TARGET_CHANNEL_ID;
+const keepMessageId = process.env.KEEP_MESSAGE_ID;
 
 const client = new Client({
     intents: [
@@ -35,7 +39,7 @@ client.once('ready', async () => {
     } catch (error) {
         console.error('Error while purging messages:', error);
     } finally {
-        // Exit the process after the purge is complete
+        client.destroy();
         process.exit(0);
     }
 });
