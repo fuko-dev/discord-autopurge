@@ -5,13 +5,15 @@ const token = process.env.DISCORD_TOKEN;
 const targetChannelId = process.env.TARGET_CHANNEL_ID;
 const keepMessageIds = process.env.KEEP_MESSAGE_IDS.split(',');
 const roleIdToRemove = process.env.ROLE_ID_TO_REMOVE;
+const keepReactionUserId = process.env.KEEP_REACTION_USER_ID;
 
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMembers,
         GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.MessageContent
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildMessageReactions
     ]
 });
 
@@ -57,6 +59,19 @@ client.once('ready', async () => {
                 console.log(`Deleted ${messagesToDelete.size} messages.`);
             } while (messagesToDelete.size > 0);
             console.log('Purge complete.');
+
+            // Remove reactions except from the specified user on the first keep message
+            const messageToKeep = await channel.messages.fetch(keepMessageIds[0]);
+            const reactions = messageToKeep.reactions.cache;
+            for (const reaction of reactions.values()) {
+                const users = await reaction.users.fetch();
+                for (const user of users.values()) {
+                    if (user.id !== keepReactionUserId) {
+                        await reaction.users.remove(user.id);
+                    }
+                }
+            }
+            console.log('Reactions removed except for the specified user.');
         } else {
             console.error('The specified channel is not a text channel.');
         }
