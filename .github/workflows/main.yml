@@ -25,5 +25,7 @@ jobs:
         env:
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
           TARGET_CHANNEL_ID: ${{ secrets.TARGET_CHANNEL_ID }}
-          KEEP_MESSAGE_ID: ${{ secrets.KEEP_MESSAGE_ID }}
+          KEEP_MESSAGE_IDS: ${{ secrets.KEEP_MESSAGE_IDS }}
+          ROLE_ID_TO_REMOVE: ${{ secrets.ROLE_ID_TO_REMOVE }}
+          KEEP_REACTION_USER_ID: ${{ secrets.KEEP_REACTION_USER_ID }}
         run: node index.js
